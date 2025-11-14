@@ -1,8 +1,11 @@
+import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 import threading
+
+import uvicorn
 
 app = FastAPI()
 
@@ -97,3 +100,9 @@ async def ws_admin(ws: WebSocket):
 
     except WebSocketDisconnect:
         admin_connections.remove(ws)
+
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
