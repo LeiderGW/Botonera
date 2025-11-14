@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Equipo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/frontend.js"></script>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center h-screen">
+
+<div id="seleccion" class="flex flex-col items-center gap-4">
+    <h2 class="text-2xl font-bold">Selecciona tu color</h2>
+
+    <select id="colorSelect" class="px-4 py-2 rounded bg-gray-800 border border-gray-600 text-white">
+        {% for c in colores %}
+            <option value="{{c}}">{{c}}</option>
+        {% endfor %}
+    </select>
+
+    <button onclick="seleccionarColor()" 
+        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 transition rounded-lg font-bold">
+        Elegir
+    </button>
+</div>
+
+<!-- Botón a pantalla completa -->
+<button id="btnPulsar" 
+    onclick="pulsar()" 
+    disabled
+    class="hidden w-full h-full text-6xl font-black tracking-wide flex items-center justify-center transition transform active:scale-95">
+    ¡PULSAR!
+</button>
+
+<script>
+ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+
+    if (msg.type === "color_ocupado") {
+        alert("Ese color ya está tomado!");
+    }
+
+    if (msg.type === "color_asignado") {
+        miColor = msg.color;
+
+        document.getElementById("seleccion").classList.add("hidden");
+
+        let btn = document.getElementById("btnPulsar");
+        btn.classList.remove("hidden");
+        btn.style.background = miColor;
+        btn.disabled = false;
+    }
+};
+</script>
+
+</body>
+</html>

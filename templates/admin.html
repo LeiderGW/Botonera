@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Administrador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+
+<h1 class="text-4xl font-bold mb-8 text-center">Panel de Administrador</h1>
+
+<!-- Turno actual -->
+<div class="flex flex-col items-center mb-12">
+    <h2 class="text-2xl mb-4">Turno actual</h2>
+    <div id="turnoCirculo" 
+         class="w-40 h-40 rounded-full flex items-center justify-center text-xl font-bold"
+         style="background: {% if turno %}{{turno}}{% else %}gray{% endif %}">
+        {% if turno %}{{turno}}{% else %}Ninguno{% endif %}
+    </div>
+
+    <button onclick="resetTurno()"
+        class="mt-6 px-6 py-3 bg-red-600 hover:bg-red-700 transition rounded-lg font-bold">
+        Reset Turno
+    </button>
+</div>
+
+<hr class="border-gray-700 my-8">
+
+<!-- Puntuaciones -->
+<h2 class="text-2xl mb-4 text-center">Puntuaciones</h2>
+
+<div id="puntos" class="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-xl mx-auto">
+    {% for color, pt in puntos.items() %}
+        {% if pt > 0 %}
+        <div class="flex items-center gap-4 bg-gray-800 p-4 rounded-xl shadow-lg">
+            <div class="w-10 h-10 rounded-full" style="background: {{color}}"></div>
+            <p class="text-xl font-bold">{{color}}: {{pt}}</p>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<!-- Sumar puntos -->
+<div class="mt-10 flex justify-center gap-4">
+    <select id="colorPts" 
+        class="px-4 py-2 bg-gray-800 rounded border border-gray-600">
+        {% for color in puntos.keys() %}
+            <option value="{{color}}">{{color}}</option>
+        {% endfor %}
+    </select>
+
+    <button onclick="sumar()"
+        class="px-6 py-3 bg-green-600 hover:bg-green-700 transition rounded-lg font-bold">
+        Sumar
+    </button>
+</div>
+
+<script>
+let ws = new WebSocket("ws://" + location.host + "/ws/admin");
+
+ws.onmessage = (event) => {
+    let msg = JSON.parse(event.data);
+
+    if (msg.type === "turno_registrado") {
+        let c = msg.color;
+        let circulo = document.getElementById("turnoCirculo");
+        circulo.style.background = c;
+        circulo.innerText = c;
+    }
+
+    if (msg.type === "turno_reseteado") {
+        let circulo = document.getElementById("turnoCirculo");
+        circulo.style.background = "gray";
+        circulo.innerText = "Ninguno";
+    }
+
+    if (msg.type === "puntos_actualizados") {
+        let html = "";
+        for (let c in msg.puntos) {
+            if (msg.puntos[c] > 0) {
+                html += `
+                <div class="flex items-center gap-4 bg-gray-800 p-4 rounded-xl shadow-lg">
+                    <div class="w-10 h-10 rounded-full" style="background:${c}"></div>
+                    <p class="text-xl font-bold">${c}: ${msg.puntos[c]}</p>
+                </div>`;
+            }
+        }
+        document.getElementById("puntos").innerHTML = html;
+    }
+};
+
+function resetTurno() {
+    ws.send(JSON.stringify({ action: "reset_turno" }));
+}
+
+function sumar() {
+    ws.send(JSON.stringify({
+        action: "sumar_puntos",
+        color: document.getElementById("colorPts").value
+    }));
+}
+</script>
+
+</body>
+</html>
