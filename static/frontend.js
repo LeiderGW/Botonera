@@ -2,7 +2,7 @@
 let protocol = location.protocol === "https:" ? "wss://" : "ws://";
 
 // Usa el protocolo dinámico
-let ws = new WebSocket("/ws/equipo");
+let ws = new WebSocket("/equipo");
 
 let miColor = null;
 
