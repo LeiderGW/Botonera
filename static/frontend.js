@@ -1,7 +1,7 @@
 const wsProtocol = location.protocol === "https:" ? "wss://" : "ws://";
 const wsHost = location.host;
 
-ws = new WebSocket(wsProtocol + wsHost + "/ws/estado");
+ws = new WebSocket(wsProtocol + wsHost + "/ws/equipo");
 
 let miColor = null;
 
