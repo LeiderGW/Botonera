@@ -38,6 +38,39 @@ async def admin(request: Request):
         "turno": turno_actual
     })
 
+
+
+
+@app.get("/reset")
+async def reset_all():
+    global turno_actual
+    
+    # Reset puntos
+    for c in puntos.keys():
+        puntos[c] = 0
+
+    # Reset turno
+    turno_actual = None
+
+    # Notificar a administradores vía WebSocket
+    for admin in admin_connections:
+        await admin.send_json({
+            "type": "puntos_actualizados",
+            "puntos": puntos
+        })
+        await admin.send_json({
+            "type": "turno_reseteado"
+        })
+
+    return {"status": "ok", "mensaje": "Puntos y turno reseteados"}
+
+
+
+
+
+
+
+
 # ---------------- WEB SOCKETS ----------------
 
 @app.websocket("/ws/equipo")

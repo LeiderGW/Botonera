@@ -54,6 +54,11 @@
     </button>
 </div>
 
+<button onclick="confirm('¿Seguro que quieres resetear todo?') && fetch('/reset')">
+    Resetear todo
+</button>
+
+
 <script>
 const wsProtocol = location.protocol === "https:" ? "wss://" : "ws://";
 const wsHost = location.host;
