@@ -1,8 +1,7 @@
-// Detecta automáticamente si debe usar ws:// (local) o wss:// (Railway)
-let protocol = location.protocol === "https:" ? "wss://" : "ws://";
+const wsProtocol = location.protocol === "https:" ? "wss://" : "ws://";
+const wsHost = location.host;
 
-// Usa el protocolo dinámico
-let ws = new WebSocket("/equipo");
+ws = new WebSocket(wsProtocol + wsHost + "/ws/estado");
 
 let miColor = null;
 
