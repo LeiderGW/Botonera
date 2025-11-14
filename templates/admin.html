@@ -55,7 +55,8 @@
 </div>
 
 <script>
-let ws = new WebSocket("ws://" + location.host + "/ws/admin");
+let protocol = location.protocol === "https:" ? "wss://" : "ws://";
+let ws = new WebSocket(protocol + location.host + "/ws/admin");
 
 ws.onmessage = (event) => {
     let msg = JSON.parse(event.data);

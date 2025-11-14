@@ -1,5 +1,11 @@
-let ws = new WebSocket("ws://" + location.host + "/ws/equipo");
+// Detecta automáticamente si debe usar ws:// (local) o wss:// (Railway)
+let protocol = location.protocol === "https:" ? "wss://" : "ws://";
+
+// Usa el protocolo dinámico
+let ws = new WebSocket(protocol + location.host + "/ws/equipo");
+
 let miColor = null;
+
 
 function seleccionarColor() {
     const color = document.getElementById("colorSelect").value;
