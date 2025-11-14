@@ -1,4 +1,5 @@
-const wsProtocol = location.protocol === "https:" ? "wss://" : "ws://";
+
+const wsProtocol = location.protocol === "https//";
 const wsHost = location.host;
 
 ws = new WebSocket(wsProtocol + wsHost + "/ws/equipo");
